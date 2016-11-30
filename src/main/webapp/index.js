@@ -2,6 +2,8 @@
 
 // request message on server
 //Calls SimpleServlet to get the "Hello World" message
+/*eslint-env browser */
+/*globals ActiveXObject */
 xhrGet("SimpleServlet", function(responseText){
 	// add to document
 	var mytitle = document.getElementById('message');
@@ -13,16 +15,15 @@ xhrGet("SimpleServlet", function(responseText){
 
 //utilities
 function createXHR(){
-	if(typeof XMLHttpRequest != 'undefined'){
+	if(typeof XMLHttpRequest !== 'undefined'){
 		return new XMLHttpRequest();
-	}else{
+	}
+	try{
+		return new ActiveXObject('Msxml2.XMLHTTP');
+	}catch(e){
 		try{
-			return new ActiveXObject('Msxml2.XMLHTTP');
-		}catch(e){
-			try{
-				return new ActiveXObject('Microsoft.XMLHTTP');
-			}catch(e){}
-		}
+			return new ActiveXObject('Microsoft.XMLHTTP');
+		}catch(e){}
 	}
 	return null;
 }
@@ -30,8 +31,8 @@ function xhrGet(url, callback, errback){
 	var xhr = new createXHR();
 	xhr.open("GET", url, true);
 	xhr.onreadystatechange = function(){
-		if(xhr.readyState == 4){
-			if(xhr.status == 200){
+		if(xhr.readyState === 4){
+			if(xhr.status === 200){
 				callback(xhr.responseText);
 			}else{
 				errback('service not available');
